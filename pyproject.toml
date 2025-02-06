@@ -1,0 +1,18 @@
+[project]
+name = "hedges"
+version = "0.1.0"
+description = "Autonomous investment engine."
+authors = [
+    {name = "Dan Harcsztark",email = "85728+dnstock@users.noreply.github.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "finrl (>=0.3.7,<0.4.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
