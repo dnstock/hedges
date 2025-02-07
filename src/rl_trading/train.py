@@ -1,5 +1,6 @@
 import logging
-from finrl.meta.preprocessor.yahoodownloader import YahooDownloader
+
+from src.utils.custom_yahoo_downloader import CustomYahooDownloader as YahooDownloader
 from finrl.meta.preprocessor.preprocessors import FeatureEngineer
 from finrl.meta.env_stock_trading.env_stocktrading_np import StockTradingEnv
 from finrl.agents.stablebaselines3.models import DRLAgent
@@ -38,12 +39,17 @@ def train_rl_agent(rl_config: dict):
         start_date=start_date,
         end_date=end_date,
         ticker_list=ticker_list,
-        time_interval=time_interval,
+        interval=time_interval,
+        timeout=timeout,
+        proxy=proxy,
     )
-    df_raw = downloader.fetch_data()
-
+    try:
+        df_raw = downloader.fetch_data_with_retry(max_retries, retry_delay)
+    except Exception as e:
+        logging.error("Data fetching failed: %s", e)
+        return
     # Resample data to a lower frequency (e.g. weekly)
-    df_raw = df_raw.set_index("date").resample("W").agg({...})
+    # df_raw = df_raw.set_index("date").resample("W").agg({...})
 
     # --- Feature Engineering ---
     fe = FeatureEngineer(
