@@ -4,31 +4,36 @@ from finrl.meta.preprocessor.preprocessors import FeatureEngineer
 from finrl.meta.env_stock_trading.env_stocktrading_np import StockTradingEnv
 from finrl.agents.stablebaselines3.models import DRLAgent
 
-def train_rl_agent(rl_config):
+def train_rl_agent(rl_config: dict):
     """
-    Train an RL agent for trading using FinRL.
-    Expects 'rl_config' to contain 'env' and 'training' sections with:
-      - env.ticker_list (list of stock tickers)
-      - env.start_date, env.end_date
-      - env.time_interval (e.g. "1D")
-      - training.timesteps
-      - training.learning_rate
-      - agent (e.g. "PPO")
+    Train an RL agent for trading using the provided configuration.
     """
-
     logging.info("Starting RL training with config: %s", rl_config)
 
-    # 1. Parse config
-    ticker_list = rl_config["env"]["ticker_list"]
-    start_date = rl_config["env"]["start_date"]      # "2020-01-01"
-    end_date = rl_config["env"]["end_date"]          # "2021-01-01"
-    time_interval = rl_config["env"]["time_interval"] # e.g. "1D"
-    agent_name = rl_config.get("agent", "PPO")        # default to PPO
-    timesteps = rl_config["training"]["timesteps"]
-    learning_rate = rl_config["training"]["learning_rate"]
-    batch_size = rl_config["training"].get("batch_size", 64)
+    # --- Parse configuration ---
+    agent_name = rl_config.get("agent", "PPO").upper()
+    env_config = rl_config.get("env", {})
+    download_config = rl_config.get("download", {})
+    training_config = rl_config.get("training", {})
 
-    # 2. Download historical data (Yahoo is a built-in option in FinRL)
+    ticker_list = env_config.get("ticker_list", [])
+    start_date = env_config.get("start_date")
+    end_date = env_config.get("end_date")
+    time_interval = env_config.get("time_interval", "1D")
+    if not ticker_list or not start_date or not end_date:
+        raise ValueError("Missing required environment configuration (ticker_list, start_date, or end_date).")
+
+    timeout = download_config.get("timeout", 30)
+    max_retries = download_config.get("max_retries", 3)
+    retry_delay = download_config.get("retry_delay", 5)
+    proxy = download_config.get("proxy", None)
+
+    timesteps = int(training_config.get("timesteps", 1e5))
+    learning_rate = training_config.get("learning_rate", 0.00025)
+    batch_size = training_config.get("batch_size", 64)
+    initial_capital = training_config.get("initial_capital", 1e6)
+
+    # --- Data Download ---
     downloader = YahooDownloader(
         start_date=start_date,
         end_date=end_date,
@@ -40,18 +45,18 @@ def train_rl_agent(rl_config):
     # Resample data to a lower frequency (e.g. weekly)
     df_raw = df_raw.set_index("date").resample("W").agg({...})
 
-    # 3. Feature engineering (technical indicators, turbulence)
+    # --- Feature Engineering ---
     fe = FeatureEngineer(
         use_technical_indicator=True,
         tech_indicator_list=["macd", "rsi_30", "cci_30", "dx_30"],
         use_turbulence=True,
-        user_defined_feature=False
+        user_defined_feature=False,
     )
     df_processed = fe.preprocess_data(df_raw)
 
-    # 4. Create trading environment
-    #    For a quick start, pass the entire dataset for "training"
-    #    but in practice, split into train/test or train/validation
+    # --- Create Trading Environment ---
+    #  For a quick start, pass the entire dataset for "training"
+    #  but in practice, split into train/test or train/validation
     env = StockTradingEnv(
         df=df_processed,
         stock_dim=len(ticker_list),
@@ -65,10 +70,9 @@ def train_rl_agent(rl_config):
         # You can add other custom params here
     )
 
-    # 5. Initialize DRL Agent (PPO, A2C, DDPG, etc.)
+    # --- Initialize DRL Agent ---
     agent = DRLAgent(env=env)
-    agent_name_upper = agent_name.upper()
-    if agent_name_upper == "PPO":
+    if agent_name == "PPO":
         model = agent.get_model(
             "ppo",
             model_kwargs={
@@ -76,7 +80,7 @@ def train_rl_agent(rl_config):
                 "batch_size": batch_size,
             }
         )
-    elif agent_name_upper == "A2C":
+    elif agent_name == "A2C":
         model = agent.get_model(
             "a2c",
             model_kwargs={
@@ -84,17 +88,23 @@ def train_rl_agent(rl_config):
                 "batch_size": batch_size,
             }
         )
+    elif agent_name == "DDPG":
+        model = agent.get_model("ddpg")
     else:
         raise ValueError(f"Unsupported agent: {agent_name}")
 
-    # 6. Train the RL model
+    # --- Train the RL Model ---
+    logging.info("Training the model (%s)...", agent_name)
     trained_model = agent.train_model(
         model=model,
-        tb_log_name=agent_name_upper,
+        tb_log_name=agent_name,
         total_timesteps=timesteps
     )
+    logging.info("Training complete.")
 
-    # 7. Save the trained model for future reuse
-    model_filename = f"{agent_name_upper}_model.zip"
+    # --- Save the trained model ---
+    model_filename = f"data/trained/{agent_name}_model.zip"
     trained_model.save(model_filename)
     logging.info("RL training complete. Model saved as: %s", model_filename)
+
+    return trained_model
