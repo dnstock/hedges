@@ -63,5 +63,5 @@ From the project root directory:
 ./scripts/run_rl_training.sh   # train RL agent
 ./scripts/run_backtest.sh      # evaluate agent performance
 ./scripts/run_live_trader.sh   # execute trades
-./run_all.sh                   # runs all modules (except live trading)
+./scripts/run_all.sh           # runs all modules (except live trading)
 ```
