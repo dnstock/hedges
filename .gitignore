@@ -1,0 +1,21 @@
+# Environment
+.env
+venv/
+.venv/
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*.egg-info
+
+# Data & Logs
+data/raw/
+data/interim/
+logs/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# OS-specific clutter
+.DS_Store
+Thumbs.db
