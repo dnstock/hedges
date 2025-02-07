@@ -48,11 +48,21 @@ poetry install
 ```
 
 ## Configuration
-API keys, model hyperparameters, and other settings are stored in `config/settings.yaml`. 
+
+### Create Settings File
+API keys, model hyperparameters, and other settings are stored in `config/settings.yaml`.  
 
 Create it by copying `config/settings_template.yaml` and modifying in the necessary values.
 ```bash
 cp config/settings_template.yaml config/settings.yaml
+```
+
+### Create Environment File (optional)
+Sensitive information like API keys can optionally be stored in an `.env` file.  
+
+Any variables defined here will override those in `config/settings.yaml`.
+```bash
+cp .env_template .env
 ```
 
 
