@@ -64,16 +64,17 @@ def train_rl_agent(rl_config: dict):
     #  For a quick start, pass the entire dataset for "training"
     #  but in practice, split into train/test or train/validation
     env = StockTradingEnv(
-        df=df_processed,
-        stock_dim=len(ticker_list),
-        hmax=100,                # max shares per trade
-        initial_amount=1e6,      # starting capital
-        transaction_cost_pct=0.001,
-        reward_scaling=1e-4,
-        state_space=len(ticker_list)*5,  # simplistic guess
-        action_space=len(ticker_list),
-        tech_indicator_list=["macd", "rsi_30", "cci_30", "dx_30"]
-        # You can add other custom params here
+        config=df_processed,
+        initial_account=initial_capital,    # Initial account balance
+        initial_capital=initial_capital,    # Initial capital available for trading
+        initial_stocks=None,                # Initial stock holdings
+        turbulence_thresh=99,               # Upper limit for market turbulence index
+        reward_scaling=2**-11,              # Scaling factor for rewards
+        min_stock_rate=0.1,                 # Minimum stock holding rate
+        max_stock=1e2,                      # Maximum number of stocks that can be held
+        buy_cost_pct=1e-3,                  # Transaction cost percentage for buying stocks
+        sell_cost_pct=1e-3,                 # Transaction cost percentage for selling stocks
+        gamma=0.99,                         # Discount factor for future rewards
     )
 
     # --- Initialize DRL Agent ---
