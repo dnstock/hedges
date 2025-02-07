@@ -89,13 +89,14 @@ class CustomYahooDownloader(YahooDownloader):
                     if not temp_df.empty:
                         temp_df.insert(1, "tic", tic)
                         data_df = pd.concat([data_df, temp_df], axis=0)
-                    else:
-                        logging.warning("Empty DataFrame returned on attempt %d.", attempt)
+                        break
+                    logging.warning("Empty DataFrame returned on attempt %d.", attempt)
                 except ReadTimeout as e:
                     logging.warning("Attempt %d/%d failed due to timeout: %s", attempt, max_retries, e)
                 except Exception as e:
                     logging.error("Attempt %d/%d encountered an error: %s", attempt, max_retries, e)
                 time.sleep(delay)
-            raise TimeoutError("Maximum retries reached. Failed to fetch data.")
+            if data_df.empty:
+                raise TimeoutError("Maximum retries reached. Failed to fetch data for ticker: %s", tic)
 
         return self._process(data_df)
