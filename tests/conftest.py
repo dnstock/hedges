@@ -2,6 +2,7 @@ import pytest
 import pandas as pd
 import numpy as np
 
+# NLP Testing Fixtures
 @pytest.fixture
 def nlp_config():
     """Provides a standard NLP configuration for testing"""
@@ -36,6 +37,7 @@ def sample_news_data():
         ]
     })
 
+# RL Training Fixtures
 @pytest.fixture
 def rl_training_config():
     """Provides a standard RL training configuration for testing"""
@@ -54,9 +56,10 @@ def rl_training_config():
         "agent": "PPO"
     }
 
+# Common Market Data Fixtures
 @pytest.fixture
 def sample_market_data():
-    """Provides sample market data for RL testing"""
+    """Provides sample market data for testing"""
     dates = pd.date_range(start='2023-01-01', end='2023-01-31', freq='D')
     data = []
 
@@ -73,3 +76,61 @@ def sample_market_data():
         data.append(ticker_data)
 
     return pd.concat(data, ignore_index=True)
+
+# Backtesting Fixtures
+@pytest.fixture
+def backtest_config():
+    """Provides standard backtesting configuration"""
+    return {
+        "env": {
+            "ticker_list": ["AAPL", "MSFT", "GOOG"],
+            "start_date": "2023-01-01",
+            "end_date": "2023-12-31",
+            "time_interval": "1D",
+            "initial_amount": 1000000,
+            "max_shares": 100
+        },
+        "agent": "PPO",
+        "model_filename": "PPO_model.zip"
+    }
+
+@pytest.fixture
+def sample_portfolio_history():
+    """Provides sample portfolio value history for testing"""
+    dates = pd.date_range(start='2023-01-01', end='2023-01-31', freq='D')
+    initial_value = 1000000
+
+    # Generate realistic-looking portfolio values with some randomness
+    returns = np.random.normal(0.0001, 0.02, len(dates))  # Daily returns
+    cumulative_returns = (1 + returns).cumprod()
+    portfolio_values = initial_value * cumulative_returns
+
+    return pd.DataFrame({
+        'date': dates,
+        'total_asset': portfolio_values,
+        'daily_return': returns,
+        'position': np.random.randint(0, 100, len(dates))
+    })
+
+@pytest.fixture
+def mock_model_output():
+    """Provides sample model predictions for testing"""
+    return {
+        'actions': np.array([0.1, -0.2, 0.0]),  # Buy, Sell, Hold
+        'values': np.array([100.0, 95.0, 98.0]),
+        'log_probs': np.array([-0.5, -0.8, -0.3])
+    }
+
+# Environment Configuration Fixtures
+@pytest.fixture
+def env_config():
+    """Provides standard environment configuration for both training and testing"""
+    return {
+        "state_space": 15,  # 5 features × 3 stocks
+        "action_space": 3,  # Number of stocks
+        "tech_indicator_list": ["macd", "rsi_30", "cci_30", "dx_30"],
+        "turbulence_threshold": 100,
+        "max_shares": 100,
+        "transaction_cost_pct": 0.001,
+        "reward_scaling": 1e-4
+    }
