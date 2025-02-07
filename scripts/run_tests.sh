@@ -21,8 +21,8 @@ case $TEST_OPTION in
     echo "Running backtesting tests"
     pytest tests/test_backtesting.py -v
     ;;
-  ex|execution)
-    echo "Running execution tests"
+  lt|livetrading)
+    echo "Running live trading tests"
     pytest tests/test_execution.py -v
     ;;
   all|*)
@@ -31,7 +31,7 @@ case $TEST_OPTION in
       pytest tests -v
     else
       echo "Invalid option: $TEST_OPTION"
-      echo "Usage: $0 [nlp|rl|bt|ex|all]"
+      echo "Usage: $0 [nlp|rl|bt|lt|all]"
       exit 1
     fi
     ;;
