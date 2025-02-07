@@ -1,4 +1,5 @@
 # Environment
+settings.yaml
 .env
 venv/
 .venv/

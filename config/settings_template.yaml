@@ -1,0 +1,41 @@
+# NLP signals config
+nlp_signals:
+  model_checkpoint: "FinGPT-Base"                 # NLP model (e.g. FinGPT-Base, ProsusAI/finbert, gpt2, etc.)
+  text_column: "headline"                         # Column name in the input data (e.g. headline, text, etc.)
+  batch_size: 16                                  # Number of samples to process in each batch (default: 16)
+  max_length: 512                                 # Maximum number of tokens in the input sequence (default: 512)
+  buy_threshold: 0.2                              # Buy threshold for the NLP signal (default: 0.2)
+  sell_threshold: -0.2                            # Sell threshold for the NLP signal (default: -0.2)
+  output_path: "data/interim/nlp_signals.csv"     # Output path for the NLP signals CSV file (default: data/interim/nlp_signals.csv)
+  text_data_path: "data/processed/news_data.csv"  # Path to the input data file (e.g. news_data.csv)
+
+# Reinforcement learning trading config
+rl_trading:
+  agent: "PPO"                                    # RL agent (e.g. PPO, FinRL, DDPG, etc.)
+  env:
+    ticker_list: ["AAPL", "MSFT", "GOOG"]         # List of tickers to trade on (e.g. AAPL, MSFT, GOOG)
+    start_date: "2020-01-01"                      # Start date for the trading data (YYYY-MM-DD)
+    end_date: "2021-01-01"                        # End date for the trading data (YYYY-MM-DD)
+    time_interval: "1D"                           # Time interval for the trading data (e.g. 1D, 1h, 1m, etc.)
+  training:
+    timesteps: 100000                             # Number of timesteps to train the agent (default: 100000)
+    learning_rate: 3e-4                           # Learning rate for the agent (default: 3e-4)
+    batch_size: 64                                # Number of episodes to train the agent (default: 64)
+  model_filename: "PPO_model.zip"                 # Filename for the trained model (e.g. PPO_model.zip)
+
+# Live/paper trading config
+execution:
+  enabled: true                                   # Set to true to enable live trading
+  broker: "alpaca"                                # Broker for live trading (e.g. alpaca, other broker)
+  api_key: "YOUR_API_KEY"                         # API key for the broker
+  api_secret: "YOUR_API_SECRET"                   # API secret for the broker
+  paper_trading: true                             # Set to true for paper trading
+  base_currency: "USD"                            # Base currency for trading (not yet implemented)
+  ticker_list: ["AAPL", "MSFT"]                   # List of tickers to trade on (e.g. AAPL, MSFT)
+  model_filename: "PPO_model.zip"                 # Filename for the trained model (e.g. PPO_model.zip)
+  loop_interval_sec: 60                           # Loop interval in seconds for live trading (default: 60)
+  initial_cash: 100000.0                          # Initial cash for trading (default: 100000.0)
+
+  risk_management:
+    max_position_size: 100                        # Maximum position size in shares per trade (default: 100)
+    daily_loss_limit: 500.0                       # Daily loss limit in USD (default: 500.0)
