@@ -53,7 +53,6 @@ class CustomYahooDownloader(YahooDownloader):
         df = df.reset_index(drop=True)
 
         logging.info(f"Data fetched successfully. Shape: {df.shape}")
-        print(f'data_df: {df}')
 
         return df.sort_values(by=["date", "tic"]).reset_index(drop=True)
 
