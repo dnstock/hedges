@@ -139,3 +139,54 @@ def env_config():
         "transaction_cost_pct": 0.001,
         "reward_scaling": 1e-4
     }
+
+# Execution Testing Fixtures
+@pytest.fixture
+def execution_config():
+    """Provides standard execution configuration for testing"""
+    return {
+        "api_key": "test_key",
+        "api_secret": "test_secret",
+        "paper_trading": True,
+        "base_currency": "USD",
+        "initial_cash": 1000000,
+        "ticker_list": ["AAPL", "MSFT", "GOOG"],
+        "loop_interval_sec": 60,
+        "model_filename": "PPO_model.zip",
+        "risk_management": {
+            "max_position_size": 100,
+            "daily_loss_limit": 500.0
+        }
+    }
+
+@pytest.fixture
+def mock_alpaca_bar():
+    """Provides a mock Alpaca bar data structure"""
+    class MockBar:
+        def __init__(self):
+            self.t = pd.Timestamp.now(tz="UTC")
+            self.o = 150.0
+            self.h = 152.0
+            self.l = 149.0
+            self.c = 151.0
+            self.v = 10000
+    return MockBar()
+
+@pytest.fixture
+def mock_alpaca_quote():
+    """Provides a mock Alpaca quote data structure"""
+    class MockQuote:
+        def __init__(self):
+            self.ap = 151.0  # ask price
+            self.bp = 150.9  # bid price
+            self.t = pd.Timestamp.now(tz="UTC")
+    return MockQuote()
+
+@pytest.fixture
+def mock_market_prices():
+    """Provides sample current market prices"""
+    return {
+        "AAPL": 150.0,
+        "MSFT": 300.0,
+        "GOOG": 2500.0
+    }
