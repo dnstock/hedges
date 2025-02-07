@@ -71,7 +71,12 @@ def sample_market_data():
             'high': np.random.uniform(100, 200, len(dates)),
             'low': np.random.uniform(100, 200, len(dates)),
             'close': np.random.uniform(100, 200, len(dates)),
-            'volume': np.random.randint(1000000, 5000000, len(dates))
+            'volume': np.random.randint(1000000, 5000000, len(dates)),
+            # Add technical indicators
+            'macd': np.random.uniform(-2, 2, len(dates)),
+            'rsi_30': np.random.uniform(0, 100, len(dates)),
+            'cci_30': np.random.uniform(-100, 100, len(dates)),
+            'dx_30': np.random.uniform(0, 100, len(dates))
         })
         data.append(ticker_data)
 
