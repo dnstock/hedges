@@ -37,12 +37,12 @@ class CustomYahooDownloader(YahooDownloader):
         # convert the column names to standardized names
         df.columns = [
             'date',
+            'tic',
             'open',
             'high',
             'low',
             'close',
             'volume',
-            'tic',
         ]
         # create day of the week column (monday = 0)
         df['day'] = df['date'].dt.dayofweek
