@@ -9,7 +9,16 @@ license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "finrl (>=0.3.7,<0.4.0)"
+    "finrl (>=0.3.7,<0.4.0)",
+    "stable-baselines3 (>=2.5.0,<3.0.0)",
+    "gymnasium[all] (>=1.0.0,<2.0.0)",
+    "numpy (>=2.2.2,<3.0.0)",
+    "pandas (>=2.2.3,<3.0.0)",
+    "matplotlib (>=3.10.0,<4.0.0)",
+    "yfinance (>=0.2.52,<0.3.0)",
+    "python-dotenv (>=1.0.1,<2.0.0)",
+    "transformers (>=4.48.2,<5.0.0)",
+    "alpaca-trade-api (>=3.2.0,<4.0.0)"
 ]
 
 
