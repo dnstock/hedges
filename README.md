@@ -28,10 +28,19 @@ hedges/
 │       ├── __init__.py
 │       ├── live_trader.py  # broker connections, order execution
 │       └── portfolio.py    # basic portfolio tracking
+├── tests/
+|   ├── conftest.py         # pytest fixtures
+│   ├── test_nlp.py         # test NLP pipeline
+│   │── test_rl.py          # test RL training
+│   ├── test_backtesting.py # test RL backtesting
+│   └── test_execution.py   # test live trading
 └── scripts/
     ├── run_nlp_pipeline.sh
     ├── run_rl_training.sh
-    └── run_backtest.sh
+    ├── run_backtest.sh
+    ├── run_live_trading.sh
+    ├── run_tests.sh
+    └── run_all.sh
 ```
 
 ## Installation
@@ -69,9 +78,19 @@ cp .env_template .env
 ## Usage
 From the project root directory:
 ```bash
-./scripts/run_nlp_pipeline.sh  # run NLP pipeline
-./scripts/run_rl_training.sh   # train RL agent
-./scripts/run_backtest.sh      # evaluate agent performance
-./scripts/run_live_trader.sh   # execute trades
-./scripts/run_all.sh           # runs all modules (except live trading)
+./scripts/run_nlp_pipeline.sh   # run NLP pipeline
+./scripts/run_rl_training.sh    # train RL agent
+./scripts/run_backtest.sh       # evaluate agent performance
+./scripts/run_live_trading.sh   # execute or simulate live trades
+./scripts/run_all.sh            # runs all modules (except live trading)
+```
+
+## Testing
+Run tests with pytest via the `run_tests.sh` script:
+```bash
+./scripts/run_tests.sh          # run all tests (default)
+./scripts/run_tests.sh nlp      # run NLP pipeline tests
+./scripts/run_tests.sh rl       # run RL training tests
+./scripts/run_tests.sh bt       # run backtesting tests
+./scripts/run_tests.sh lt       # run live trading tests
 ```
