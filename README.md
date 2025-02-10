@@ -94,3 +94,6 @@ Run tests with pytest via the `run_tests.sh` script:
 ./scripts/run_tests.sh bt       # run backtesting tests
 ./scripts/run_tests.sh lt       # run live trading tests
 ```
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
